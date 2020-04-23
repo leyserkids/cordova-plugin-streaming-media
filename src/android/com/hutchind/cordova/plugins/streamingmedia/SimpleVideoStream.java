@@ -23,8 +23,8 @@ import android.widget.RelativeLayout;
 import android.widget.VideoView;
 
 public class SimpleVideoStream extends Activity implements
-MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener,
-MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
+		MediaPlayer.OnCompletionListener, MediaPlayer.OnPreparedListener,
+		MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 	private String TAG = getClass().getSimpleName();
 	private VideoView mVideoView = null;
 	private MediaPlayer mMediaPlayer = null;
@@ -40,6 +40,7 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+//		getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
 
 		navigationBarHeight = getNavigationBarHeight();
 
@@ -175,18 +176,18 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 		sb.append("MediaPlayer Error: ");
 		switch (what) {
 			case MediaPlayer.MEDIA_ERROR_NOT_VALID_FOR_PROGRESSIVE_PLAYBACK:
-			sb.append("Not Valid for Progressive Playback");
-			break;
+				sb.append("Not Valid for Progressive Playback");
+				break;
 			case MediaPlayer.MEDIA_ERROR_SERVER_DIED:
-			sb.append("Server Died");
-			break;
+				sb.append("Server Died");
+				break;
 			case MediaPlayer.MEDIA_ERROR_UNKNOWN:
-			sb.append("Unknown");
-			break;
+				sb.append("Unknown");
+				break;
 			default:
-			sb.append(" Non standard (");
-			sb.append(what);
-			sb.append(")");
+				sb.append(" Non standard (");
+				sb.append(what);
+				sb.append(")");
 		}
 		sb.append(" (" + what + ") ");
 		sb.append(extra);
@@ -219,9 +220,15 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 	}
 
 	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		if (mMediaController != null)
-			mMediaController.show();
-		return false;
+	public boolean dispatchTouchEvent(MotionEvent ev) {
+		Log.i("this@@@", "dispatchTouchEvent");
+		if (mMediaController != null && ev.getAction() == MotionEvent.ACTION_DOWN){
+			if (mMediaController.isShowing()) {
+				mMediaController.hide();
+			} else {
+				mMediaController.show(0);
+			}
+		}
+		return true;
 	}
 }
