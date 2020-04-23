@@ -2,6 +2,7 @@ package com.hutchind.cordova.plugins.streamingmedia;
 
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.media.MediaPlayer;
@@ -32,12 +33,15 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 	private String mVideoUrl;
 	private Boolean mShouldAutoClose = true;
 	private boolean mControls;
+	private int navigationBarHeight = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+		navigationBarHeight = getNavigationBarHeight();
 
 		Bundle b = getIntent().getExtras();
 		mVideoUrl = b.getString("mediaUrl");
@@ -80,6 +84,7 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 			mVideoView.setVideoURI(videoUri);
 			mMediaController = new MediaController(this);
 			mMediaController.setAnchorView(mVideoView);
+			mMediaController.setPadding(0, 0, 0, navigationBarHeight);
 			mMediaController.setMediaPlayer(mVideoView);
 			if (!mControls) {
 				mMediaController.setVisibility(View.GONE);
@@ -96,6 +101,15 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 		}else if("portrait".equals(orientation)) {
 			this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		}
+	}
+
+	private int getNavigationBarHeight() {
+		Resources resources = getResources();
+		int resourceId = resources.getIdentifier("navigation_bar_height", "dimen", "android");
+		if (resourceId > 0) {
+			return resources.getDimensionPixelSize(resourceId);
+		}
+		return 0;
 	}
 
 	private Runnable checkIfPlaying = new Runnable() {
@@ -196,6 +210,12 @@ MediaPlayer.OnErrorListener, MediaPlayer.OnBufferingUpdateListener {
 	public void onConfigurationChanged(Configuration newConfig) {
 		// The screen size changed or the orientation changed... don't restart the activity
 		super.onConfigurationChanged(newConfig);
+
+		if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+			mMediaController.setPadding(0, 0, 0, 0);
+		} else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+			mMediaController.setPadding(0, 0, 0, navigationBarHeight);
+		}
 	}
 
 	@Override
