@@ -85,7 +85,9 @@ public class SimpleVideoStream extends Activity implements
 			mVideoView.setVideoURI(videoUri);
 			mMediaController = new MediaController(this);
 			mMediaController.setAnchorView(mVideoView);
-			mMediaController.setPadding(0, 0, 0, navigationBarHeight);
+			if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+				mMediaController.setPadding(0, 0, 0, navigationBarHeight);
+			}
 			mMediaController.setMediaPlayer(mVideoView);
 			if (!mControls) {
 				mMediaController.setVisibility(View.GONE);
