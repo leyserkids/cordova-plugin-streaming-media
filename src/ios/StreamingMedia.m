@@ -208,16 +208,20 @@ NSString * const DEFAULT_IMAGE_SCALE = @"center";
     
     // handle orientation
     [self handleOrientation];
-    
-    // handle gestures
-    [self handleGestures];
+
+    if(@available(iOS 11.0, *)) {
+        // handle gestures
+        [self handleGestures];
+    }
     
     [moviePlayer setPlayer:movie];
     [moviePlayer setShowsPlaybackControls:YES];
     [moviePlayer setUpdatesNowPlayingInfoCenter:YES];
     [moviePlayer setAllowsPictureInPicturePlayback:NO];
     
-    if(@available(iOS 11.0, *)) { [moviePlayer setEntersFullScreenWhenPlaybackBegins:YES]; }
+    if(@available(iOS 11.0, *)) {
+        [moviePlayer setEntersFullScreenWhenPlaybackBegins:YES];
+    }
     
     // present modally so we get a close button
     [self.viewController presentViewController:moviePlayer animated:YES completion:^(void){
